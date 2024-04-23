@@ -71,9 +71,7 @@
 <script>
     const linkData = window.location.search;
     const newData = new URLSearchParams(linkData);
-    
     const gitHubId = newData.get('git_uid');
-    
     const reqUrl = 'https://api.github.com/users/' + gitHubId;
     let xhr = new XMLHttpRequest();
     xhr.open('GET', reqUrl);
@@ -125,10 +123,9 @@
             }
             addFollowing()
         }
-
-
     }
     xhr.send();
 
 </script>
+
 </html>
