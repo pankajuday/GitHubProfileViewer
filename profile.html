@@ -47,85 +47,121 @@
             <div class="repo_head">
                 <table>
                     <tr>
-                        <td class="sn">s.n</td>
-                        <td class="repo_title">Repositary Title</td>
-                        <td class="ssh">ssh</td>
-                        <td class="download">download</td>
+                        <th class="sn">s.n</th>
+                        <th class="repo_title">Repositary Title</th>
+                        <th class="link">Link</th>
+                        <th class="download">download</th>
                     </tr>
                 </table>
             </div>
-            <div class="repo_containt">
-                <div>
-                    <span>111</span>
-                    <span>repo title</span>
-                    <span><a href=""><img src="link.png" alt=""></a></span>
-                    <span><a><img src="down.png" alt=""></a></span>
-                </div>
-
-
-            </div>
+            <table id="repo_containt">
+                <tr>
+                   
+                </tr>
+            </table>
         </div>
 
     </div>
-</body>
-<script>
-    const linkData = window.location.search;
-    const newData = new URLSearchParams(linkData);
-    const gitHubId = newData.get('git_uid');
-    const reqUrl = 'https://api.github.com/users/' + gitHubId;
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', reqUrl);
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-            const data = JSON.parse(this.responseText);
-            let nameInData = data.name;
-            let usernameInData = data.login;
-            let userImage = data.avatar_url;
-            let userBio = data.bio;
-            let userFollowers = data.followers;
-            let userFollowing = data.following;
+    <script>
+
+        const linkData = window.location.search;
+        const newData = new URLSearchParams(linkData);
+        const gitHubId = newData.get('git_uid');
+        const reqUrl = 'https://api.github.com/users/' + gitHubId;
+        const reposUrl = 'https://api.github.com/users/' + gitHubId + "/repos";
+       
+
+        
+
+
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', reqUrl);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                const data = JSON.parse(this.responseText);
+                let nameInData = data.name;
+                let usernameInData = data.login;
+                let userImage = data.avatar_url;
+                let userBio = data.bio;
+                let userFollowers = data.followers;
+                let userFollowing = data.following;
 
 
 
-            function addName() {
-                const nameOfUser = document.getElementById('name');
-                const username = document.getElementById('username');
-                nameOfUser.innerText = nameInData;
-                username.innerText = `@${usernameInData}`;
+                function addName() {
+                    const nameOfUser = document.getElementById('name');
+                    const username = document.getElementById('username');
+                    nameOfUser.innerText = nameInData;
+                    username.innerText = `@${usernameInData}`;
 
+                }
+                addName();
+
+                function addBio() {
+                    const bio = document.getElementById('bio');
+                    bio.innerText = `${userBio}`;
+
+                }
+                addBio()
+
+                function addImage() {
+                    const profileImg = document.getElementById('image');
+                    profileImg.style.backgroundImage = `url(${userImage})`;
+                }
+                addImage();
+
+                function addFollowers() {
+                    const followers = document.getElementById('no_fowers');
+                    followers.innerHTML = userFollowers;
+
+                }
+                addFollowers()
+
+                function addFollowing() {
+                    const following = document.getElementById('no_fowing');
+                    following.innerHTML = userFollowing;
+
+                }
+                addFollowing()
             }
-            addName();
-
-            function addBio() {
-                const bio = document.getElementById('bio');
-                bio.innerText = `${userBio}`;
-
-            }
-            addBio()
-
-            function addImage() {
-                const profileImg = document.getElementById('image');
-                profileImg.style.backgroundImage = `url(${userImage})`;
-            }
-            addImage();
-
-            function addFollowers() {
-                const followers = document.getElementById('no_fowers');
-                followers.innerHTML = userFollowers;
-
-            }
-            addFollowers()
-
-            function addFollowing() {
-                const following = document.getElementById('no_fowing');
-                following.innerHTML = userFollowing;
-
-            }
-            addFollowing()
         }
-    }
-    xhr.send();
+        xhr.send();
 
-</script>
+        fetch(reposUrl).then(function (response) {
+            return response.json()
+
+        }).then(function (data) {
+            // console.log(data[0])
+          
+            
+        //bellow section which is table  is created with help of chatGPT and changed some part
+        const tableBody = document.querySelector('#repo_containt tbody');
+      // Loop through each repository
+      let snCount = 0;
+      data.forEach(repo => {
+        const row = document.createElement('tr');
+        const sn = document.createElement('td');
+        const titleCell = document.createElement('td');
+        const LinkCell = document.createElement('td');
+        const downloadLinkCell = document.createElement('td');
+
+        sn.textContent = ++snCount;
+        titleCell.textContent =  repo.name;
+        LinkCell.innerHTML =  `<a href="${repo.html_url}" target="_blank"><img src="link.png" alt="link"></a>` ;
+        downloadLinkCell.innerHTML = `<a href="${repo.html_url}/archive/master.zip"><img src="down.png" alt=""></a>`;
+        row.appendChild(sn);
+        row.appendChild(titleCell);
+        row.appendChild(LinkCell);
+        row.appendChild(downloadLinkCell);
+        
+        tableBody.appendChild(row);
+      });
+
+        }).catch(function (error) {
+            console.error(error);
+        });
+
+    </script>
+</body>
 
 </html>
