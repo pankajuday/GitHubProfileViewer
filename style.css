@@ -316,6 +316,7 @@ table{
             margin-left: 1em;
             height: 1.2em;
             width: 3em;
+            text-align: center;
         }
         td:nth-child(2){
             margin-left: 9em;

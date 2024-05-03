@@ -56,7 +56,7 @@
             </div>
             <table id="repo_containt">
                 <tr>
-                   
+
                 </tr>
             </table>
         </div>
@@ -68,11 +68,9 @@
         const newData = new URLSearchParams(linkData);
         const gitHubId = newData.get('git_uid');
         const reqUrl = 'https://api.github.com/users/' + gitHubId;
-        const reposUrl = 'https://api.github.com/users/' + gitHubId + "/repos";
-       
-
-        
-
+        //const reposUrl = 'https://api.github.com/users/' + gitHubId + "/repos";
+        let page = 1;
+        const reposUrl = `https://api.github.com/users/${gitHubId}/repos?page=${page}&per_page=200`
 
         let xhr = new XMLHttpRequest();
         xhr.open('GET', reqUrl);
@@ -127,39 +125,43 @@
         }
         xhr.send();
 
+
+
         fetch(reposUrl).then(function (response) {
             return response.json()
-
-        }).then(function (data) {
-            // console.log(data[0])
-          
             
-        //bellow section which is table  is created with help of chatGPT and changed some part
-        const tableBody = document.querySelector('#repo_containt tbody');
-      // Loop through each repository
-      let snCount = 0;
-      data.forEach(repo => {
-        const row = document.createElement('tr');
-        const sn = document.createElement('td');
-        const titleCell = document.createElement('td');
-        const LinkCell = document.createElement('td');
-        const downloadLinkCell = document.createElement('td');
+            
+        }).then(function (data) {
 
-        sn.textContent = ++snCount;
-        titleCell.textContent =  repo.name;
-        LinkCell.innerHTML =  `<a href="${repo.html_url}" target="_blank"><img src="link.png" alt="link"></a>` ;
-        downloadLinkCell.innerHTML = `<a href="${repo.html_url}/archive/master.zip"><img src="down.png" alt=""></a>`;
-        row.appendChild(sn);
-        row.appendChild(titleCell);
-        row.appendChild(LinkCell);
-        row.appendChild(downloadLinkCell);
-        
-        tableBody.appendChild(row);
-      });
+            //bellow section which is table  is created with help of chatGPT and changed some part
+            // Loop through each repository
+            
+            let snCount = 0;
+            
+            data.forEach(repo => {
+                const tableBody = document.querySelector('#repo_containt tbody');
+                const row = document.createElement('tr');
+                const sn = document.createElement('td');
+                const titleCell = document.createElement('td');
+                const LinkCell = document.createElement('td');
+                const downloadLinkCell = document.createElement('td');
 
+                sn.textContent = ++snCount;
+                titleCell.textContent = repo.name;
+                LinkCell.innerHTML = `<a href="${repo.html_url}" target="_blank"><img src="link.png" alt="link"></a>`;
+                downloadLinkCell.innerHTML = `<a href="${repo.html_url}/archive/master.zip"><img src="down.png" alt=""></a>`;
+                row.appendChild(sn);
+                row.appendChild(titleCell);
+                row.appendChild(LinkCell);
+                row.appendChild(downloadLinkCell);
+
+                tableBody.appendChild(row);
+
+            });
         }).catch(function (error) {
             console.error(error);
         });
+
 
     </script>
 </body>
