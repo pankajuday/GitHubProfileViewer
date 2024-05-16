@@ -1,169 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>github_profile_viewer</title>
-    <link rel="stylesheet" href="style.css">
-</head>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-<body>
+  <body>
     <div class="main">
-        <div class="head">
-            <div class="left">
-                <div id="logo1"></div>
-            </div>
-            <div class="right">
-                <div id="logo2"></div>
-                <div id="logo3"></div>
-                <div id="logo4"></div>
-            </div>
+      <div class="head">
+        <div class="left">
+          <div id="logo1"></div>
         </div>
-        <hr style="background-color: white; height: 2px; width: auto; margin-top:2px;">
-
-        <div class="profile">
-            <div class="image" id="image"></div>
-            <div class="box2"></div>
-            <div class="box3">
-                <span class="name" id="name">xxxxx</span>
-                <span class="username" id="username">xxxx</span>
-            </div>
-            <div class="box4">
-                <span class="followers">followers</span>
-                <span class="following">following</span>
-            </div>
-            <div class="box5">
-                <span id="no_fowers">0</span>
-                <span id="no_fowing">0</span>
-            </div>
-            <span class="bio_head" style="color: wheat;">Bio ::</span><br>
-            <div class="box6">
-                <span class="bio" id="bio"></span>
-            </div>
+        <div class="right">
+          <div id="logo2"></div>
+          <div id="logo3"></div>
+          <div id="logo4"></div>
         </div>
-        <hr class="hr2">
-        <div class="repo">
-            <div class="repo_head">
-                <table>
-                    <tr>
-                        <th class="sn">s.n</th>
-                        <th class="repo_title">Repositary Title</th>
-                        <th class="link">Link</th>
-                        <th class="download">download</th>
-                    </tr>
-                </table>
-            </div>
-            <table id="repo_containt">
-                <tr>
+      </div>
+      <hr
+        style="
+          background-color: white;
+          height: 2px;
+          width: auto;
+          margin-top: 2px;
+        "
+      />
 
-                </tr>
-            </table>
+      <div class="profile">
+        <div class="image" id="image"></div>
+        <div class="box2"></div>
+        <div class="box3">
+          <span class="name" id="name">xxxxx</span>
+          <span class="username" id="username">xxxx</span>
         </div>
-
+        <div class="box4">
+          <span class="followers">followers</span>
+          <span class="following">following</span>
+        </div>
+        <div class="box5">
+          <span id="no_fowers">0</span>
+          <span id="no_fowing">0</span>
+        </div>
+        <span class="bio_head" style="color: wheat">Bio ::</span><br />
+        <div class="box6">
+          <span class="bio" id="bio"></span>
+        </div>
+      </div>
+      <hr class="hr2" />
+      <div class="repo">
+        <div class="repo_head">
+          <table>
+            <tr>
+              <th class="sn">s.n</th>
+              <th class="repo_title">Repositary Title</th>
+              <th class="link">Link</th>
+              <th class="download">download</th>
+            </tr>
+          </table>
+        </div>
+        <table id="repo_containt">
+          <tr></tr>
+        </table>
+      </div>
     </div>
     <script>
+      const linkData = window.location.search;
+      const newData = new URLSearchParams(linkData);
+      const gitHubId = newData.get("git_uid");
+      const reqUrl = "https://api.github.com/users/" + gitHubId;
+      //const reposUrl = 'https://api.github.com/users/' + gitHubId + "/repos";
+      let no_page;
+      let repo_in_page = 200;
+      const reposUrl = `https://api.github.com/users/${gitHubId}/repos?page=${(no_page = 1)}&per_page=${repo_in_page}`;
+      // let total_repos = [] ;
+      let xhr = new XMLHttpRequest();
+      xhr.open("GET", reqUrl);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          const data = JSON.parse(this.responseText);
+          let nameInData = data.name;
+          let usernameInData = data.login;
+          let userImage = data.avatar_url;
+          let userBio = data.bio;
+          let userFollowers = data.followers;
+          let userFollowing = data.following;
 
-        const linkData = window.location.search;
-        const newData = new URLSearchParams(linkData);
-        const gitHubId = newData.get('git_uid');
-        const reqUrl = 'https://api.github.com/users/' + gitHubId;
-        //const reposUrl = 'https://api.github.com/users/' + gitHubId + "/repos";
-        let page = 1;
-        const reposUrl = `https://api.github.com/users/${gitHubId}/repos?page=${page}&per_page=200`
+          function addName() {
+            const nameOfUser = document.getElementById("name");
+            const username = document.getElementById("username");
+            nameOfUser.innerText = nameInData;
+            username.innerText = `@${usernameInData}`;
+          }
+          addName();
 
-        let xhr = new XMLHttpRequest();
-        xhr.open('GET', reqUrl);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                const data = JSON.parse(this.responseText);
-                let nameInData = data.name;
-                let usernameInData = data.login;
-                let userImage = data.avatar_url;
-                let userBio = data.bio;
-                let userFollowers = data.followers;
-                let userFollowing = data.following;
+          function addBio() {
+            const bio = document.getElementById("bio");
+            bio.innerText = `${userBio}`;
+          }
+          addBio();
 
+          function addImage() {
+            const profileImg = document.getElementById("image");
+            profileImg.style.backgroundImage = `url(${userImage})`;
+          }
+          addImage();
 
+          function addFollowers() {
+            const followers = document.getElementById("no_fowers");
+            followers.innerHTML = userFollowers;
+          }
+          addFollowers();
 
-                function addName() {
-                    const nameOfUser = document.getElementById('name');
-                    const username = document.getElementById('username');
-                    nameOfUser.innerText = nameInData;
-                    username.innerText = `@${usernameInData}`;
-
-                }
-                addName();
-
-                function addBio() {
-                    const bio = document.getElementById('bio');
-                    bio.innerText = `${userBio}`;
-
-                }
-                addBio()
-
-                function addImage() {
-                    const profileImg = document.getElementById('image');
-                    profileImg.style.backgroundImage = `url(${userImage})`;
-                }
-                addImage();
-
-                function addFollowers() {
-                    const followers = document.getElementById('no_fowers');
-                    followers.innerHTML = userFollowers;
-
-                }
-                addFollowers()
-
-                function addFollowing() {
-                    const following = document.getElementById('no_fowing');
-                    following.innerHTML = userFollowing;
-
-                }
-                addFollowing()
-            }
+          function addFollowing() {
+            const following = document.getElementById("no_fowing");
+            following.innerHTML = userFollowing;
+          }
+          addFollowing();
         }
-        xhr.send();
+      };
+      xhr.send();
 
+      fetch(reposUrl)
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (data) {
+          //bellow section which is table  is created with help of chatGPT and changed some part
+          // Loop through each repository
 
+          // console.log(data);
+          let snCount = 0;
 
-        fetch(reposUrl).then(function (response) {
-            return response.json()
-            
-            
-        }).then(function (data) {
+          data.forEach((repo) => {
+            const tableBody = document.querySelector("#repo_containt tbody");
+            const row = document.createElement("tr");
+            const sn = document.createElement("td");
+            const titleCell = document.createElement("td");
+            const LinkCell = document.createElement("td");
+            const downloadLinkCell = document.createElement("td");
 
-            //bellow section which is table  is created with help of chatGPT and changed some part
-            // Loop through each repository
-            
-            let snCount = 0;
-            
-            data.forEach(repo => {
-                const tableBody = document.querySelector('#repo_containt tbody');
-                const row = document.createElement('tr');
-                const sn = document.createElement('td');
-                const titleCell = document.createElement('td');
-                const LinkCell = document.createElement('td');
-                const downloadLinkCell = document.createElement('td');
+            sn.textContent = ++snCount;
+            titleCell.textContent = repo.name;
+            LinkCell.innerHTML = `<a href="${repo.html_url}" target="_blank"><img src="link.png" alt="link"></a>`;
+            downloadLinkCell.innerHTML = `<a href="${repo.html_url}/archive/master.zip"><img src="down.png" alt=""></a>`;
+            row.appendChild(sn);
+            row.appendChild(titleCell);
+            row.appendChild(LinkCell);
+            row.appendChild(downloadLinkCell);
 
-                sn.textContent = ++snCount;
-                titleCell.textContent = repo.name;
-                LinkCell.innerHTML = `<a href="${repo.html_url}" target="_blank"><img src="link.png" alt="link"></a>`;
-                downloadLinkCell.innerHTML = `<a href="${repo.html_url}/archive/master.zip"><img src="down.png" alt=""></a>`;
-                row.appendChild(sn);
-                row.appendChild(titleCell);
-                row.appendChild(LinkCell);
-                row.appendChild(downloadLinkCell);
+            tableBody.appendChild(row);
 
-                tableBody.appendChild(row);
-
-            });
-        }).catch(function (error) {
-            console.error(error);
+            no_page++;
+            console.log(no_page);
+          });
+        })
+        .catch(function (error) {
+          console.error(error);
         });
 
-
+      console.log("page", no_page);
     </script>
-</body>
-
+  </body>
 </html>
